@@ -1,0 +1,11 @@
+[
+  {
+    "id": "academic-a",
+    "name": "Academic Block A",
+    "short_name": "Block A",
+    "category": "academic",
+    "longitude": 76.361,
+    "latitude": 30.3525,
+    "hours": "8am - 9pm"
+  }
+]
