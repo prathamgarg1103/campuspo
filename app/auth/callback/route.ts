@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   
   if (code) {
+    const cookieStore = cookies()
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     
@@ -13,12 +15,13 @@ export async function GET(request: Request) {
       const supabase = createServerClient(url, key, {
         cookies: {
           get(name: string) {
-            return undefined // Handling set/remove via middleware/response
+            return cookieStore.get(name)?.value
           },
           set(name: string, value: string, options) {
-            // we don't strictly need this in a GET handler that redirects
+            cookieStore.set({ name, value, ...options })
           },
           remove(name: string, options) {
+            cookieStore.delete({ name, ...options })
           },
         },
       })
@@ -26,10 +29,11 @@ export async function GET(request: Request) {
       const { error } = await supabase.auth.exchangeCodeForSession(code)
       if (!error) {
         return NextResponse.redirect(new URL('/', request.url))
+      } else {
+        console.error('Auth error:', error)
       }
     }
   }
 
-  // URL to redirect to after sign in process completes
-  return NextResponse.redirect(new URL('/', requestUrl.origin))
+  return NextResponse.redirect(new URL('/login?error=true', request.url))
 }
