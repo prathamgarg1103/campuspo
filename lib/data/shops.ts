@@ -251,7 +251,6 @@ export const CAMPUS_SHOPS: CampusShop[] = [
   },
 ]
 
-// Category icon colors
 export const SHOP_CATEGORY_COLORS: Record<CampusShop['category'], string> = {
   food: 'bg-orange-50 text-orange-600',
   cafe: 'bg-amber-50 text-amber-700',
@@ -265,6 +264,8 @@ export const SHOP_CATEGORY_COLORS: Record<CampusShop['category'], string> = {
   laundry: 'bg-sky-50 text-sky-600',
   electronics: 'bg-indigo-50 text-indigo-600',
   clothing: 'bg-fuchsia-50 text-fuchsia-600',
+  photography: 'bg-teal-50 text-teal-600',
+  pizza: 'bg-red-50 text-red-700',
   other: 'bg-slate-50 text-slate-600',
 }
 

@@ -19,12 +19,12 @@ export function StudentSidebar() {
 
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-slate-100 bg-white px-3 py-4 md:block">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-4 md:block">
         <Link href="/" className="mb-6 flex items-center gap-3 px-3">
           <span className="grid size-9 place-items-center rounded-xl bg-brand-600 text-sm font-bold text-white">CG</span>
           <span>
-            <span className="block text-sm font-semibold text-slate-950">CampusGO</span>
-            <span className="block text-xs text-slate-500">Student app</span>
+            <span className="block text-sm font-semibold text-slate-950 dark:text-slate-50">CampusGO</span>
+            <span className="block text-xs text-slate-500 dark:text-slate-400">Student app</span>
           </span>
         </Link>
         <nav className="flex flex-col gap-1">
@@ -47,7 +47,7 @@ export function StudentSidebar() {
           })}
         </nav>
       </aside>
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 border-t border-slate-100 bg-white px-2 py-2 md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 px-2 py-2 md:hidden">
         {navItems.map((item) => {
           const Icon = item.icon
           const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)

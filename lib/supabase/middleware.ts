@@ -7,6 +7,13 @@ export async function updateSession(request: NextRequest) {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!url || !key || url.includes('your_') || key.includes('your_')) {
+    const pathname = request.nextUrl.pathname
+    const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/auth')
+    if (!isAuthRoute) {
+      const redirectUrl = request.nextUrl.clone()
+      redirectUrl.pathname = '/login'
+      return NextResponse.redirect(redirectUrl)
+    }
     return response
   }
 
@@ -28,6 +35,33 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
-  await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  const pathname = request.nextUrl.pathname
+  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/auth')
+
+  // If there's no user and we are not on an auth route, redirect to login
+  if (!user && !isAuthRoute) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
+  // If user is logged in but tries to access login page, send to home
+  if (user && isAuthRoute && pathname === '/login') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/'
+    return NextResponse.redirect(url)
+  }
+
+  // Enforce @thapar.edu domain checking if they are logged in
+  if (user && !user.email?.endsWith('@thapar.edu')) {
+    // Force sign out if somehow they bypassed (though Google OAuth config should block this)
+    await supabase.auth.signOut()
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
   return response
 }
