@@ -5,10 +5,21 @@ export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request })
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const pathname = request.nextUrl.pathname
+  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/auth')
+  const hasDemoSession = request.cookies.get('campusgo-demo-session')?.value === 'student'
+
+  if (hasDemoSession) {
+    if (pathname === '/login') {
+      const redirectUrl = request.nextUrl.clone()
+      redirectUrl.pathname = '/'
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    return response
+  }
 
   if (!url || !key || url.includes('your_') || key.includes('your_')) {
-    const pathname = request.nextUrl.pathname
-    const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/auth')
     if (!isAuthRoute) {
       const redirectUrl = request.nextUrl.clone()
       redirectUrl.pathname = '/login'
@@ -36,9 +47,6 @@ export async function updateSession(request: NextRequest) {
   })
 
   const { data: { user } } = await supabase.auth.getUser()
-  
-  const pathname = request.nextUrl.pathname
-  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/auth')
 
   // If there's no user and we are not on an auth route, redirect to login
   if (!user && !isAuthRoute) {
@@ -60,6 +68,7 @@ export async function updateSession(request: NextRequest) {
     await supabase.auth.signOut()
     const url = request.nextUrl.clone()
     url.pathname = '/login'
+    url.searchParams.set('error', 'domain')
     return NextResponse.redirect(url)
   }
 

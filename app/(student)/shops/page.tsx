@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Search, Clock, MapPin, Phone, Store } from 'lucide-react'
+import { Search, Clock, Phone, Store } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -34,7 +34,7 @@ function ShopCard({ shop }: { shop: CampusShop }) {
         </Badge>
         {shop.opening_time && (
           <span className="flex items-center gap-2 text-xs text-slate-400">
-            <Clock className="size-3" /> {shop.opening_time} – {shop.closing_time}
+            <Clock className="size-3" /> {shop.opening_time} - {shop.closing_time}
           </span>
         )}
         {shop.phone && (
@@ -117,7 +117,7 @@ export default function ShopsPage() {
       <div>
         <h2 className="text-2xl font-bold text-slate-950">Campus Shops</h2>
         <p className="mt-1 text-sm text-slate-500">
-          {CAMPUS_SHOPS.length} shops across 3 areas — COS, G-Block & H-Block
+          {CAMPUS_SHOPS.length} shops across 3 areas - COS, G-Block & H-Block
         </p>
       </div>
 

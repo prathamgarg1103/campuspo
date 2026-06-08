@@ -3,7 +3,6 @@ import { CalendarDays, MapPin } from 'lucide-react'
 import type { Event } from '@/lib/types'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { formatEventDate } from '@/lib/utils/formatDate'
 
 export function EventCard({ event }: { event: Event }) {
@@ -30,8 +29,11 @@ export function EventCard({ event }: { event: Event }) {
       </CardContent>
       <CardFooter className="justify-between">
         <span className="text-sm text-slate-500">{capacity}</span>
-        <Link href={`/events/${event.id}`}>
-          <Button>View</Button>
+        <Link
+          href={`/events/${event.id}`}
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+        >
+          View
         </Link>
       </CardFooter>
     </Card>

@@ -158,14 +158,8 @@ export function LeafletCampusMap() {
               key={building.id}
               position={[building.coordinates[1], building.coordinates[0]]}
               icon={pinIcon(building, selected?.id === building.id)}
-              draggable={true}
               eventHandlers={{
                 click: () => setSelected(building),
-                dragend: (e) => {
-                  const marker = e.target
-                  const position = marker.getLatLng()
-                  console.log(`Updated ${building.name} (${building.id}) to: [${position.lng.toFixed(5)}, ${position.lat.toFixed(5)}]`)
-                }
               }}
             >
               <Popup>

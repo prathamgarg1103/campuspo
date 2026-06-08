@@ -9,6 +9,14 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const getRedirectUrl = () => {
+    if (process.env.NEXT_PUBLIC_APP_URL) {
+      return `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+    }
+
+    return `${window.location.origin}/auth/callback`
+  }
+
   const handleGoogleLogin = async () => {
     setLoading(true)
     setError(null)
@@ -27,7 +35,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: getRedirectUrl(),
         queryParams: {
           prompt: 'select_account',
         }
@@ -40,31 +48,9 @@ export default function LoginPage() {
     }
   }
 
-  const handleDevLogin = async () => {
-    setLoading(true)
-    setError(null)
-    
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-    if (!supabaseUrl || !supabaseKey) return
-
-    const supabase = createBrowserClient(supabaseUrl, supabaseKey)
-
-    // For local dev, auto-signup and login with a fake thapar email
-    const email = 'testuser@thapar.edu'
-    const password = 'testpassword123'
-    
-    // Attempt sign up (will fail if exists, but we can ignore it)
-    await supabase.auth.signUp({ email, password })
-    
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-    } else {
-      window.location.href = '/' // redirect to dashboard
-    }
+  const handleDemoLogin = () => {
+    document.cookie = 'campusgo-demo-session=student; path=/; max-age=604800; SameSite=Lax'
+    window.location.href = '/'
   }
 
   return (
@@ -111,6 +97,15 @@ export default function LoginPage() {
               </svg>
             )}
             Sign in with Google
+          </Button>
+
+          <Button
+            onClick={handleDemoLogin}
+            disabled={loading}
+            variant="outline"
+            className="w-full flex justify-center items-center gap-3 py-6 text-base"
+          >
+            Continue as Demo Student
           </Button>
 
           {error && (

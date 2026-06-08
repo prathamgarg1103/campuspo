@@ -1,5 +1,4 @@
 import type { BuildingPin } from '@/lib/mapbox/campusGeoJSON'
-import { Button } from '@/components/ui/button'
 
 export function BuildingPopup({ building }: { building: BuildingPin }) {
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${building.coordinates[1]},${building.coordinates[0]}`
@@ -12,8 +11,13 @@ export function BuildingPopup({ building }: { building: BuildingPin }) {
       <p className="mt-3 text-xs text-slate-500">
         {building.coordinates[1].toFixed(4)}, {building.coordinates[0].toFixed(4)}
       </p>
-      <a href={directionsUrl} target="_blank" rel="noreferrer" className="mt-4 block">
-        <Button className="w-full">Get directions</Button>
+      <a
+        href={directionsUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+      >
+        Get directions
       </a>
     </div>
   )

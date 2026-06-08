@@ -8,13 +8,16 @@ import { createBrowserClient } from '@supabase/ssr'
 
 export function TopBar({ title }: { title: string }) {
   const handleSignOut = async () => {
+    document.cookie = 'campusgo-demo-session=; path=/; max-age=0; SameSite=Lax'
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    if (supabaseUrl && supabaseKey) {
+    if (supabaseUrl && supabaseKey && !supabaseUrl.includes('your_') && !supabaseKey.includes('your_')) {
       const supabase = createBrowserClient(supabaseUrl, supabaseKey)
       await supabase.auth.signOut()
-      window.location.href = '/login'
     }
+
+    window.location.href = '/login'
   }
 
   return (

@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { Search, Calendar, MapPin, Users, Ticket, ArrowUpRight } from 'lucide-react'
 import { sampleEvents } from '@/lib/data/sample'
 import { format } from 'date-fns'
@@ -47,7 +47,7 @@ export default function EventsPage() {
     <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto">
       <div>
         <h1 className="text-3xl font-bold text-slate-950">Campus Events</h1>
-        <p className="text-slate-500 mt-1">Discover what's happening around campus</p>
+        <p className="text-slate-500 mt-1">Discover what&apos;s happening around campus</p>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
@@ -130,10 +130,17 @@ export default function EventsPage() {
                     </div>
                   </div>
 
-                  <Button className="w-full mt-4" variant={event.requires_registration ? 'default' : 'outline'}>
-                    {event.requires_registration ? 'Register Now' : 'View Details'} 
+                  <Link
+                    href={`/events/${event.id}`}
+                    className={`mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 ${
+                      event.requires_registration
+                        ? 'bg-brand-600 text-white hover:bg-brand-700'
+                        : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    {event.requires_registration ? 'Register Now' : 'View Details'}
                     <ArrowUpRight className="size-4 ml-1" />
-                  </Button>
+                  </Link>
                 </CardContent>
               </Card>
             )

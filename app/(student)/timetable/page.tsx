@@ -9,6 +9,10 @@ type TimetableCell = {
   color: string
 }
 
+function isAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === 'AbortError'
+}
+
 export default function TimetablePage() {
   const [sheets, setSheets] = useState<string[]>([])
   const [classes, setClasses] = useState<string[]>([])
@@ -32,20 +36,29 @@ export default function TimetablePage() {
 
   // Fetch sheets on mount
   useEffect(() => {
+    const controller = new AbortController()
+
     const fetchSheets = async () => {
       try {
-        const res = await fetch('/api/timetable?sheets=true')
+        const res = await fetch('/api/timetable?sheets=true', { signal: controller.signal })
+        if (!res.ok) return
         const data = await res.json()
         if (data.sheets) {
           setSheets(data.sheets)
         }
       } catch (error) {
-        console.error('Failed to fetch sheets:', error)
+        if (!isAbortError(error)) {
+          setSheets([])
+        }
       } finally {
-        setLoadingSheets(false)
+        if (!controller.signal.aborted) {
+          setLoadingSheets(false)
+        }
       }
     }
+
     fetchSheets()
+    return () => controller.abort()
   }, [])
 
   // Fetch classes when sheet changes
@@ -57,23 +70,34 @@ export default function TimetablePage() {
       return
     }
 
+    const controller = new AbortController()
+
     const fetchClasses = async () => {
       setLoadingClasses(true)
       setSelectedClass('')
       setTimetable([])
       try {
-        const res = await fetch(`/api/timetable?sheet=${encodeURIComponent(selectedSheet)}&classes=true`)
+        const res = await fetch(`/api/timetable?sheet=${encodeURIComponent(selectedSheet)}&classes=true`, {
+          signal: controller.signal,
+        })
+        if (!res.ok) return
         const data = await res.json()
         if (data.classes) {
           setClasses(data.classes)
         }
       } catch (error) {
-        console.error('Failed to fetch classes:', error)
+        if (!isAbortError(error)) {
+          setClasses([])
+        }
       } finally {
-        setLoadingClasses(false)
+        if (!controller.signal.aborted) {
+          setLoadingClasses(false)
+        }
       }
     }
+
     fetchClasses()
+    return () => controller.abort()
   }, [selectedSheet])
 
   // Fetch timetable when class changes
@@ -83,21 +107,32 @@ export default function TimetablePage() {
       return
     }
 
+    const controller = new AbortController()
+
     const fetchTimetable = async () => {
       setLoadingTimetable(true)
       try {
-        const res = await fetch(`/api/timetable?sheet=${encodeURIComponent(selectedSheet)}&class=${encodeURIComponent(selectedClass)}`)
+        const res = await fetch(`/api/timetable?sheet=${encodeURIComponent(selectedSheet)}&class=${encodeURIComponent(selectedClass)}`, {
+          signal: controller.signal,
+        })
+        if (!res.ok) return
         const data = await res.json()
         if (data.timetable) {
           setTimetable(data.timetable)
         }
       } catch (error) {
-        console.error('Failed to fetch timetable:', error)
+        if (!isAbortError(error)) {
+          setTimetable([])
+        }
       } finally {
-        setLoadingTimetable(false)
+        if (!controller.signal.aborted) {
+          setLoadingTimetable(false)
+        }
       }
     }
+
     fetchTimetable()
+    return () => controller.abort()
   }, [selectedSheet, selectedClass])
 
   const getColorClass = (color: string) => {

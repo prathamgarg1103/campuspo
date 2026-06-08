@@ -15,7 +15,6 @@ import {
   type OrgCategory,
   type ThaparOrg,
 } from '@/lib/data/societies'
-import { Button } from '@/components/ui/button'
 
 const typeLabels: Record<OrgType, string> = {
   society: 'Society',
@@ -86,10 +85,13 @@ function OrgCard({ org }: { org: ThaparOrg }) {
           )}
         </div>
 
-        <a href={org.apply_url ?? '#'} target="_blank" rel="noopener noreferrer" className="mt-2">
-          <Button className="h-8 w-full gap-1.5 text-xs">
-            Apply <ArrowUpRight className="size-3" />
-          </Button>
+        <a
+          href={org.apply_url ?? '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-flex min-h-8 w-full items-center justify-center gap-1.5 rounded-full bg-brand-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+        >
+          Apply <ArrowUpRight className="size-3" />
         </a>
       </CardContent>
     </Card>

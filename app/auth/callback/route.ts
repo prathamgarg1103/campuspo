@@ -5,6 +5,7 @@ import { cookies } from 'next/headers'
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? requestUrl.origin
   
   if (code) {
     const cookieStore = cookies()
@@ -28,12 +29,12 @@ export async function GET(request: Request) {
       
       const { error } = await supabase.auth.exchangeCodeForSession(code)
       if (!error) {
-        return NextResponse.redirect(new URL('/', request.url))
+        return NextResponse.redirect(new URL('/', appUrl))
       } else {
         console.error('Auth error:', error)
       }
     }
   }
 
-  return NextResponse.redirect(new URL('/login?error=true', request.url))
+  return NextResponse.redirect(new URL('/login?error=true', appUrl))
 }

@@ -1,23 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import fs from 'fs'
-import path from 'path'
+import { sampleTimetable } from '@/lib/data/sample'
+import timetableData from '@/lib/data/timetable-data.json'
 
-// Cache the data in memory
-let cachedData: any = null
-
-function getTimetableData() {
-  if (cachedData) return cachedData
-  
-  try {
-    const filePath = path.join(process.cwd(), 'lib', 'data', 'timetable-data.json')
-    const fileContents = fs.readFileSync(filePath, 'utf8')
-    cachedData = JSON.parse(fileContents)
-    return cachedData
-  } catch (error) {
-    console.error('Error loading timetable data:', error)
-    return null
-  }
+type TimetableCell = {
+  course: string
+  color: string
 }
+
+type TimetableData = Record<string, Record<string, TimetableCell[][]>>
+
+const data = timetableData as TimetableData
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -25,12 +17,9 @@ export async function GET(request: NextRequest) {
   const reqSheet = searchParams.get('sheet')
   const reqClasses = searchParams.get('classes')
   const reqClass = searchParams.get('class')
-
-  const data = getTimetableData()
-
-  if (!data) {
-    return NextResponse.json({ error: 'Failed to load timetable data' }, { status: 500 })
-  }
+  const reqBranch = searchParams.get('branch')
+  const reqSemester = searchParams.get('semester')
+  const reqSection = searchParams.get('section')
 
   // ?sheets=true
   if (reqSheets === 'true') {
@@ -59,6 +48,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Class not found' }, { status: 404 })
     }
     return NextResponse.json({ timetable: classData })
+  }
+
+  // Backwards-compatible response for the older hook shape.
+  // The main timetable UI uses sheet/class data above.
+  if (reqBranch && reqSemester) {
+    const semesterNumber = Number(reqSemester)
+    const slots = sampleTimetable.filter(
+      (slot) =>
+        slot.branch === reqBranch &&
+        slot.semester === semesterNumber &&
+        (!reqSection || slot.section === reqSection),
+    )
+    return NextResponse.json(slots.length > 0 ? slots : sampleTimetable)
   }
 
   return NextResponse.json({ error: 'Invalid request' }, { status: 400 })

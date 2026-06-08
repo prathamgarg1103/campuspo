@@ -1,8 +1,7 @@
 import Link from 'next/link'
-import { CalendarDays, Clock, MapPin, Ticket, Store, Users, ArrowRight, Map } from 'lucide-react'
+import { CalendarDays, Clock, MapPin, Ticket, Store, ArrowRight, Map } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { NextClassBanner } from '@/components/timetable/NextClassBanner'
 import { sampleEvents, sampleShops, sampleTimetable, sampleProfiles } from '@/lib/data/sample'
 import { THAPAR_ORGS, ORG_TYPE_COLORS, ORG_CATEGORY_COLORS } from '@/lib/data/societies'
@@ -11,7 +10,7 @@ import { formatEventDate } from '@/lib/utils/formatDate'
 const user = sampleProfiles[0]
 
 export default function HomePage() {
-  // Find a plausible "next class" — pick the first slot
+  // Find a plausible next class by picking the first slot.
   const nextSlot = sampleTimetable[0]
 
   return (
@@ -19,7 +18,7 @@ export default function HomePage() {
       {/* Greeting */}
       <section>
         <h2 className="text-2xl font-bold text-slate-950">
-          Welcome back, {user.full_name.split(' ')[0]} 👋
+          Welcome back, {user.full_name.split(' ')[0]}
         </h2>
         <p className="mt-1 text-sm text-slate-500">
           Here&apos;s what&apos;s happening on campus today.
@@ -91,8 +90,11 @@ export default function HomePage() {
                   <span className="text-xs text-slate-400">
                     {event.current_registrations}/{event.max_capacity} spots
                   </span>
-                  <Link href={`/events/${event.id}`}>
-                    <Button className="h-8 text-xs">View</Button>
+                  <Link
+                    href={`/events/${event.id}`}
+                    className="inline-flex min-h-8 items-center justify-center gap-2 rounded-full bg-brand-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+                  >
+                    View
                   </Link>
                 </div>
               </CardContent>
@@ -160,7 +162,7 @@ export default function HomePage() {
                 </span>
                 {shop.opening_time && (
                   <span className="flex items-center gap-2">
-                    <Clock className="size-3.5" /> {shop.opening_time} – {shop.closing_time}
+                    <Clock className="size-3.5" /> {shop.opening_time} - {shop.closing_time}
                   </span>
                 )}
               </CardContent>
